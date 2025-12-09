@@ -1,0 +1,50 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.production
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+build/
+
+# Coverage reports
+coverage/
+
+# Debugging
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# PM2 logs & data
+.pids
+*.pid
+*.seed
+*.pid.lock
+
+# Local databases or exports
+*.sqlite
+*.db
+dump.rdb
+
+# Optional: remove if using uploads folder
+uploads/
