@@ -14,11 +14,11 @@ export const register = async (req, res) => {
 
         const user = await User.findOne({ username });
         if (user) {
-            return res.status(400).json({ message: "Username already exit try different" });
+            return res.status(400).json({ message: "This username already exists." });
         }
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // profilePhoto
+        
         const maleProfilePhoto = `https://avatar.iran.liara.run/public/boy?username=${username}`;
         const femaleProfilePhoto = `https://avatar.iran.liara.run/public/girl?username=${username}`;
 
@@ -61,7 +61,7 @@ export const login = async (req, res) => {
             userId: user._id
         };
 
-        const token = await jwt.sign(tokenData, process.env.JWT_SECRET_KEY, { expiresIn: '1d' });
+        const token = jwt.sign(tokenData, process.env.JWT_SECRET_KEY, { expiresIn: '1d' });
 
         return res.status(200).cookie("token", token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'strict' }).json({
             _id: user._id,
