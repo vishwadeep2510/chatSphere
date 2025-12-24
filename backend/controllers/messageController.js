@@ -39,6 +39,9 @@ export const sendMessage = async (req,res) => {
         })
     } catch (error) {
         console.log(error);
+        return res.status(500).json({
+            message:"Internal Server Error",
+        })
     }
 }
 export const getMessage = async (req,res) => {
