@@ -1,6 +1,7 @@
 import { User } from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import cloudinary from "../config/cloudinary.js";
 
 export const register = async (req, res) => {
     try {
@@ -18,15 +19,19 @@ export const register = async (req, res) => {
         }
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        
-        const maleProfilePhoto = `https://avatar.iran.liara.run/public/boy?username=${username}`;
-        const femaleProfilePhoto = `https://avatar.iran.liara.run/public/girl?username=${username}`;
+        let profilePhoto = "";
+        if(req.file){
+            const uploadedImage = await cloudinary.v2.uploader.upload(req.file.path, {
+                folder:"chat-app/profiles",
+            });
+            profilePhoto = uploadedImage.secure_url;
+        }
 
         await User.create({
             fullName,
             username,
             password: hashedPassword,
-            profilePhoto: gender === "male" ? maleProfilePhoto : femaleProfilePhoto,
+            profilePhoto,
             gender
         });
         return res.status(201).json({
