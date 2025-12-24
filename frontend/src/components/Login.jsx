@@ -1,76 +1,133 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import toast from "react-hot-toast"
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { setAuthUser } from '../redux/userSlice';
-import { BASE_URL } from '..';
+import { setAuthUser } from "../redux/userSlice";
+import { BASE_URL } from "..";
 
 const Login = () => {
   const [user, setUser] = useState({
     username: "",
     password: "",
   });
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${BASE_URL}/api/v1/user/login`, user, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        withCredentials: true
-      });
-      navigate("/");
-      console.log(res);
+      const res = await axios.post(
+        `${BASE_URL}/api/v1/user/login`,
+        user,
+        { withCredentials: true }
+      );
       dispatch(setAuthUser(res.data));
+      navigate("/home");
     } catch (error) {
-      toast.error(error.response.data.message);
-      console.log(error);
+      toast.error(error.response?.data?.message || "Login failed");
     }
-    setUser({
-      username: "",
-      password: ""
-    })
-  }
-  return (
-    <div className="min-w-96 mx-auto">
-      <div className='w-full p-6 rounded-lg shadow-md bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-10 border border-gray-100'>
-        <h1 className='text-3xl font-bold text-center'>Login</h1>
-        <form onSubmit={onSubmitHandler} action="">
 
+    setUser({ username: "", password: "" });
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[#020617] px-4">
+      <div
+        className="
+          w-full max-w-sm
+          bg-[#020617]
+          border border-white/10
+          rounded-xl
+          p-6
+          shadow-xl
+        "
+      >
+        <h1 className="text-2xl font-semibold text-white text-center mb-6">
+          Welcome back
+        </h1>
+
+        <form onSubmit={onSubmitHandler} className="space-y-4">
+          {/* Username */}
           <div>
-            <label className='label p-2'>
-              <span className='text-base label-text'>Username</span>
+            <label className="block text-sm text-gray-400 mb-1">
+              Username
             </label>
             <input
               value={user.username}
-              onChange={(e) => setUser({ ...user, username: e.target.value })}
-              className='w-full input input-bordered h-10'
+              onChange={(e) =>
+                setUser({ ...user, username: e.target.value })
+              }
               type="text"
-              placeholder='Username' />
+              placeholder="Enter your username"
+              className="
+                w-full px-3 py-2
+                bg-white/5
+                text-sm text-white
+                rounded-md
+                border border-white/10
+                placeholder-gray-500
+                focus:outline-none
+                focus:border-emerald-500/50
+              "
+            />
           </div>
+
+          {/* Password */}
           <div>
-            <label className='label p-2'>
-              <span className='text-base label-text'>Password</span>
+            <label className="block text-sm text-gray-400 mb-1">
+              Password
             </label>
             <input
               value={user.password}
-              onChange={(e) => setUser({ ...user, password: e.target.value })}
-              className='w-full input input-bordered h-10'
+              onChange={(e) =>
+                setUser({ ...user, password: e.target.value })
+              }
               type="password"
-              placeholder='Password' />
+              placeholder="Enter your password"
+              className="
+                w-full px-3 py-2
+                bg-white/5
+                text-sm text-white
+                rounded-md
+                border border-white/10
+                placeholder-gray-500
+                focus:outline-none
+                focus:border-emerald-500/50
+              "
+            />
           </div>
-          <p className='text-center my-2'>Don't have an account? <Link to="/signup"> signup </Link></p>
-          <div>
-            <button type="submit" className='btn btn-block btn-sm mt-2 border border-slate-700'>Login</button>
-          </div>
+
+          {/* Button */}
+          <button
+            type="submit"
+            className="
+              w-full py-2
+              rounded-md
+              bg-emerald-600
+              text-white text-sm font-medium
+              hover:bg-emerald-500
+              transition
+            "
+          >
+            Login
+          </button>
         </form>
+
+        {/* Footer */}
+        <p className="text-sm text-gray-400 text-center mt-4">
+          Don’t have an account?{" "}
+          <Link
+            to="/signup"
+            className="text-emerald-400 hover:text-emerald-300"
+          >
+            Sign up
+          </Link>
+        </p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

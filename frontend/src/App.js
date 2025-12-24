@@ -1,64 +1,67 @@
-import Signup from './components/Signup';
-import './App.css';
-import {createBrowserRouter, RouterProvider} from "react-router-dom";
-import HomePage from './components/HomePage';
-import Login from './components/Login';
-import { useEffect, useState } from 'react';
-import {useSelector,useDispatch} from "react-redux";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import HomePage from "./components/HomePage";
+import Signup from "./components/Signup";
+import Login from "./components/Login";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import io from "socket.io-client";
-import { setSocket } from './redux/socketSlice';
-import { setOnlineUsers } from './redux/userSlice';
-import { BASE_URL } from '.';
+import { setSocket } from "./redux/socketSlice";
+import ProtectedRoute from "./components/ProtectedRoute";
+import {
+  setOnlineUsers,
+  setTypingUser,
+  clearTypingUser,
+} from "./redux/userSlice";
+import { BASE_URL } from ".";
 
 const router = createBrowserRouter([
-  {
-    path:"/",
-    element:<HomePage/>
+  { 
+    path: "/", 
+    element: <Login /> 
   },
-  {
-    path:"/signup",
-    element:<Signup/>
+  { 
+    path: "/signup", 
+    element: <Signup /> 
   },
-  {
-    path:"/login",
-    element:<Login/>
+  { 
+    path: "/login", 
+    element: <Login /> 
   },
+  { 
+    path: "/home", 
+    element: <ProtectedRoute> <HomePage /> </ProtectedRoute> 
+  },
+]);
 
-])
-
-function App() { 
-  const {authUser} = useSelector(store=>store.user);
-  const {socket} = useSelector(store=>store.socket);
+function App() {
+  const { authUser } = useSelector((store) => store.user);
   const dispatch = useDispatch();
 
-  useEffect(()=>{
-    if(authUser){
-      const socketio = io(`${BASE_URL}`, {
-          query:{
-            userId:authUser._id
-          }
-      });
-      dispatch(setSocket(socketio));
+  useEffect(() => {
+    if (!authUser) return;
 
-      socketio?.on('getOnlineUsers', (onlineUsers)=>{
-        dispatch(setOnlineUsers(onlineUsers))
-      });
-      return () => socketio.close();
-    }else{
-      if(socket){
-        socket.close();
-        dispatch(setSocket(null));
-      }
-    }
+    const socket = io(BASE_URL, {
+      query: { userId: authUser._id },
+    });
 
-  },[authUser]);
+    dispatch(setSocket(socket));
 
-  return (
-    <div className="p-4 h-screen flex items-center justify-center">
-      <RouterProvider router={router}/>
-    </div>
+    socket.on("getOnlineUsers", (users) => {
+      dispatch(setOnlineUsers(users));
+    });
 
-  );
+    socket.on("typing", ({ senderId }) => {
+      dispatch(setTypingUser(senderId));
+    });
+
+    socket.on("stopTyping", () => {
+      dispatch(clearTypingUser());
+    });
+
+    return () => socket.disconnect();
+  }, [authUser, dispatch]);
+
+  return <RouterProvider router={router} />;
 }
 
 export default App;

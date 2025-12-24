@@ -1,47 +1,70 @@
-import React, {useState } from 'react'
 import { IoSend } from "react-icons/io5";
+import { useState, useRef } from "react";
 import axios from "axios";
-import {useDispatch,useSelector} from "react-redux";
-import { setMessages } from '../redux/messageSlice';
-import { BASE_URL } from '..';
+import { useDispatch, useSelector } from "react-redux";
+import { setMessages } from "../redux/messageSlice";
+import { BASE_URL } from "..";
 
 const SendInput = () => {
-    const [message, setMessage] = useState("");
-    const dispatch = useDispatch();
-    const {selectedUser} = useSelector(store=>store.user);
-    const {messages} = useSelector(store=>store.message);
+  const [message, setMessage] = useState("");
+  const typingRef = useRef(null);
+  const dispatch = useDispatch();
+  const { selectedUser, authUser } = useSelector((s) => s.user);
+  const { socket } = useSelector((s) => s.socket);
+  const { messages } = useSelector((s) => s.message);
 
-    const onSubmitHandler = async (e) => {
-        e.preventDefault();
-        try {
-            const res = await axios.post(`${BASE_URL}/api/v1/message/send/${selectedUser?._id}`, {message}, {
-                headers:{
-                    'Content-Type':'application/json'
-                },
-                withCredentials:true
-            });
-            dispatch(setMessages([...messages, res?.data?.newMessage]))
-        } catch (error) {
-            console.log(error);
-        } 
-        setMessage("");
-    }
-    return (
-        <form onSubmit={onSubmitHandler} className='px-4 my-3'>
-            <div className='w-full relative'>
-                <input
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    type="text"
-                    placeholder='Send a message...'
-                    className='border text-sm rounded-lg block w-full p-3 border-zinc-500 bg-gray-600 text-white'
-                />
-                <button type="submit" className='absolute flex inset-y-0 end-0 items-center pr-4'>
-                    <IoSend />
-                </button>
-            </div>
-        </form>
-    )
-}
+  const handleChange = (e) => {
+    setMessage(e.target.value);
+    socket?.emit("typing", {
+      senderId: authUser._id,
+      receiverId: selectedUser._id,
+    });
 
-export default SendInput
+    clearTimeout(typingRef.current);
+    typingRef.current = setTimeout(() => {
+      socket?.emit("stopTyping", {
+        senderId: authUser._id,
+        receiverId: selectedUser._id,
+      });
+    }, 800);
+  };
+
+  const sendMessage = async (e) => {
+    e.preventDefault();
+    if (!message.trim()) return;
+
+    const res = await axios.post(
+      `${BASE_URL}/api/v1/message/send/${selectedUser._id}`,
+      { message },
+      { withCredentials: true }
+    );
+
+    dispatch(setMessages([...messages, res.data.newMessage]));
+    setMessage("");
+  };
+  
+  return (
+    <form onSubmit={sendMessage} className="p-3  border-white/10">
+      <div className="flex items-center gap-2">
+        <input
+          value={message}
+          onChange={handleChange}
+          placeholder="Type a message"
+          className="
+            flex-1 px-3 py-2
+            bg-white/5
+            text-sm text-white
+            rounded-md
+            border border-white/10
+            focus:outline-none
+          "
+        />
+        <button className="text-gray-400 hover:text-white">
+          <IoSend />
+        </button>
+      </div>
+    </form>
+  );
+};
+
+export default SendInput;

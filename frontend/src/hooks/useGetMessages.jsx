@@ -1,24 +1,35 @@
-import React, { useEffect } from 'react'
+import { useEffect } from "react";
 import axios from "axios";
-import {useSelector,useDispatch} from "react-redux";
-import { setMessages } from '../redux/messageSlice';
-import { BASE_URL } from '..';
+import { useSelector, useDispatch } from "react-redux";
+import { setMessages } from "../redux/messageSlice";
+import { BASE_URL } from "..";
 
 const useGetMessages = () => {
-    const {selectedUser} = useSelector(store=>store.user);
-    const dispatch = useDispatch();
-    useEffect(() => {
-        const fetchMessages = async () => {
-            try {
-                axios.defaults.withCredentials = true;
-                const res = await axios.get(`${BASE_URL}/api/v1/message/${selectedUser?._id}`);
-                dispatch(setMessages(res.data))
-            } catch (error) {
-                console.log(error);
-            }
-        }
-        fetchMessages();
-    }, [selectedUser?._id,setMessages]);
-}
+  const { selectedUser } = useSelector((store) => store.user);
+  const dispatch = useDispatch();
 
-export default useGetMessages
+  useEffect(() => {
+    if (!selectedUser?._id) {
+      dispatch(setMessages([]));
+      return;
+    }
+
+    const fetchMessages = async () => {
+      try {
+        const res = await axios.get(
+          `${BASE_URL}/api/v1/message/${selectedUser._id}`,
+          { withCredentials: true }
+        );
+        
+        dispatch(setMessages(Array.isArray(res.data) ? res.data : []));
+      } catch (error) {
+        console.error(error);
+        dispatch(setMessages([]));
+      }
+    };
+
+    fetchMessages();
+  }, [selectedUser?._id, dispatch]);
+};
+
+export default useGetMessages;
