@@ -7,7 +7,7 @@ const router = express.Router();
 router.post("/register", upload.single("profilePhoto"), register);
 router.route("/login").post(login);
 router.route("/logout").get(logout);
-router.route("/").get(isAuthenticated,getOtherUsers);
+router.route("/").get(isAuthenticated, getOtherUsers);
 router.get("/me", isAuthenticated, getMe);
 
 export default router;

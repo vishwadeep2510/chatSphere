@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(cookieParser());
 const corsOption={
     origin:'https://chat-sphere-ivory-three.vercel.app',
-    credentials:true
+    credentials: true
 };
 app.use(cors(corsOption)); 
 
