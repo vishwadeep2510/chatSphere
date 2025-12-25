@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuthUser, setLoading } from "../redux/userSlice";
-import { BASE_URL } from "..";
+import { REACT_APP_BASE_URL } from "../index.js";
 
 const Login = () => {
   const [user, setUser] = useState({
@@ -19,7 +19,7 @@ const Login = () => {
     e.preventDefault();
     try {
       dispatch(setLoading(true));
-      const res = await axios.post(`${BASE_URL}/api/v1/user/login`, user, {
+      const res = await axios.post(`${REACT_APP_BASE_URL}/api/v1/user/login`, user, {
         withCredentials: true,
       });
       dispatch(setAuthUser(res.data));

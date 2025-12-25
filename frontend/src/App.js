@@ -12,7 +12,7 @@ import {
   setTypingUser,
   clearTypingUser,
 } from "./redux/userSlice";
-import { BASE_URL } from ".";
+import { REACT_APP_BASE_URL } from "./index.js";
 
 const router = createBrowserRouter([
   { 
@@ -40,7 +40,7 @@ function App() {
   useEffect(() => {
     if (!authUser) return;
 
-    const socket = io(BASE_URL, {
+    const socket = io(REACT_APP_BASE_URL, {
       query: { userId: authUser._id },
     });
 

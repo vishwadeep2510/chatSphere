@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { BASE_URL } from "..";
+import {REACT_APP_BASE_URL } from "..";
 import { setLoading } from "../redux/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 const Signup = () => {
@@ -44,7 +44,7 @@ const Signup = () => {
       }
 
       const res = await axios.post(
-        `${BASE_URL}/api/v1/user/register`,
+        `${REACT_APP_BASE_URL}/api/v1/user/register`,
         formData,
         { withCredentials: true }
       );
@@ -87,21 +87,21 @@ const Signup = () => {
         </h1>
 
         <form onSubmit={onSubmitHandler} className="space-y-4">
-          {/* Full Name */}
+          
           <Input
             label="Full Name"
             value={user.fullName}
             onChange={(v) => setUser({ ...user, fullName: v })}
           />
 
-          {/* Username */}
+          
           <Input
             label="Username"
             value={user.username}
             onChange={(v) => setUser({ ...user, username: v })}
           />
 
-          {/* Password */}
+        
           <Input
             label="Password"
             type="password"
@@ -109,7 +109,7 @@ const Signup = () => {
             onChange={(v) => setUser({ ...user, password: v })}
           />
 
-          {/* Confirm Password */}
+          
           <Input
             label="Confirm Password"
             type="password"
@@ -119,7 +119,7 @@ const Signup = () => {
             }
           />
 
-          {/* Gender */}
+          
           <div className="flex items-center gap-4 text-sm text-gray-300">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -139,7 +139,7 @@ const Signup = () => {
             </label>
           </div>
 
-          {/* Profile Photo */}
+          
           <div>
             <label className="block text-sm text-gray-400 mb-1">
               Profile photo (optional)
@@ -160,7 +160,7 @@ const Signup = () => {
             />
           </div>
 
-          {/* Preview */}
+          
           {preview && (
             <div className="flex justify-center">
               <img
@@ -171,7 +171,7 @@ const Signup = () => {
             </div>
           )}
 
-          {/* Button */}
+          
           <button
             type="submit"
             disabled={loading}
@@ -222,7 +222,6 @@ const Signup = () => {
   );
 };
 
-/* 🔹 Small reusable input component */
 const Input = ({ label, value, onChange, type = "text" }) => (
   <div>
     <label className="block text-sm text-gray-400 mb-1">

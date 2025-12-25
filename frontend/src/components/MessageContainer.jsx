@@ -7,7 +7,6 @@ const MessageContainer = () => {
     (store) => store.user
   );
 
-  // Empty state (no conversation selected)
   if (!selectedUser) {
     return (
       <div className="flex-1 flex items-center justify-center text-gray-400 text-sm">

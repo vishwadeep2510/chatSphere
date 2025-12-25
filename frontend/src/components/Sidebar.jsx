@@ -9,7 +9,7 @@ import {
   setSelectedUser,
 } from "../redux/userSlice";
 import { setMessages } from "../redux/messageSlice";
-import { BASE_URL } from "..";
+import { REACT_APP_BASE_URL} from "..";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import useGetOtherUsers from "../hooks/useGetOtherUsers";
@@ -27,7 +27,7 @@ const Sidebar = () => {
 
   const logoutHandler = async () => {
     try {
-      await axios.get(`${BASE_URL}/api/v1/user/logout`, {
+      await axios.get(`${REACT_APP_BASE_URL}/api/v1/user/logout`, {
         withCredentials: true,
       });
 

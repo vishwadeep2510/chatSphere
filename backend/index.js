@@ -14,14 +14,16 @@ app.use(express.urlencoded({extended:true}));
 app.use(express.json()); 
 app.use(cookieParser());
 const corsOption={
-    origin:'http://localhost:3000',
+    origin:'https://chatsphere-5u9g.onrender.com',
     credentials:true
 };
 app.use(cors(corsOption)); 
 
 app.use("/api/v1/user",userRoute); 
 app.use("/api/v1/message",messageRoute);
- 
+app.get('/', (req, res)=>{
+    res.send("hello from the backend!");
+})
 
 server.listen(PORT, ()=>{
     connectDB();
