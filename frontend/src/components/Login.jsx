@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuthUser, setLoading } from "../redux/userSlice";
-import { REACT_APP_BASE_URL } from "../index.js";
+import { BASE_URL } from "../index.js";
 
 const Login = () => {
   const [user, setUser] = useState({
@@ -14,14 +14,15 @@ const Login = () => {
   const { loading } = useSelector((store) => store.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  console.log("LOGIN API URL:", `${BASE_URL}/api/v1/user/login`);
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     try {
       dispatch(setLoading(true));
-      const res = await axios.post(`${REACT_APP_BASE_URL}/api/v1/user/login`, user, {
+      const res = await axios.post(`${BASE_URL}/api/v1/user/login`, user, {
         withCredentials: true,
       });
+      console.log(res.data);
       dispatch(setAuthUser(res.data));
       navigate("/home");
     } catch (error) {
@@ -50,7 +51,7 @@ const Login = () => {
         </h1>
 
         <form onSubmit={onSubmitHandler} className="space-y-4">
-          {/* Username */}
+          
           <div>
             <label className="block text-sm text-gray-400 mb-1">Username</label>
             <input
@@ -71,7 +72,7 @@ const Login = () => {
             />
           </div>
 
-          {/* Password */}
+          
           <div>
             <label className="block text-sm text-gray-400 mb-1">Password</label>
             <input
@@ -128,7 +129,7 @@ const Login = () => {
           </button>
         </form>
 
-        {/* Footer */}
+        
         <p className="text-sm text-gray-400 text-center mt-4">
           Don’t have an account?{" "}
           <Link

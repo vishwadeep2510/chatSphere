@@ -3,7 +3,7 @@ import { useState, useRef } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setMessages } from "../redux/messageSlice";
-import { REACT_APP_BASE_URL } from "..";
+import { BASE_URL } from "..";
 
 const SendInput = () => {
   const [message, setMessage] = useState("");
@@ -34,7 +34,7 @@ const SendInput = () => {
     if (!message.trim()) return;
 
     const res = await axios.post(
-      `${REACT_APP_BASE_URL}/api/v1/message/send/${selectedUser._id}`,
+      `${BASE_URL}/api/v1/message/send/${selectedUser._id}`,
       { message },
       { withCredentials: true }
     );

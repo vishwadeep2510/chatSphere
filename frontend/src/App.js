@@ -11,25 +11,23 @@ import {
   setOnlineUsers,
   setTypingUser,
   clearTypingUser,
+  setAuthUser,
+  setLoading,
 } from "./redux/userSlice";
-import { REACT_APP_BASE_URL } from "./index.js";
+import axios from "axios";
+import { BASE_URL } from "./index.js";
 
 const router = createBrowserRouter([
-  { 
-    path: "/", 
-    element: <Login /> 
-  },
-  { 
-    path: "/signup", 
-    element: <Signup /> 
-  },
-  { 
-    path: "/login", 
-    element: <Login /> 
-  },
-  { 
-    path: "/home", 
-    element: <ProtectedRoute> <HomePage /> </ProtectedRoute> 
+  { path: "/", element: <Login /> },
+  { path: "/signup", element: <Signup /> },
+  { path: "/login", element: <Login /> },
+  {
+    path: "/home",
+    element: (
+      <ProtectedRoute>
+        <HomePage />
+      </ProtectedRoute>
+    ),
   },
 ]);
 
@@ -37,10 +35,29 @@ function App() {
   const { authUser } = useSelector((store) => store.user);
   const dispatch = useDispatch();
 
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        dispatch(setLoading(true));
+        const res = await axios.get(`${BASE_URL}/api/v1/user/me`, {
+          withCredentials: true,
+        });
+        dispatch(setAuthUser(res.data));
+      } catch (error) {
+        dispatch(setAuthUser(null));
+      } finally {
+        dispatch(setLoading(false));
+      }
+    };
+
+    checkAuth();
+  }, [dispatch]);
+
   useEffect(() => {
     if (!authUser) return;
 
-    const socket = io(REACT_APP_BASE_URL, {
+    const socket = io(BASE_URL, {
       query: { userId: authUser._id },
     });
 
