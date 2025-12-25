@@ -3,7 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { BASE_URL } from "..";
-
+import { setLoading } from "../redux/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 const Signup = () => {
   const [user, setUser] = useState({
     fullName: "",
@@ -12,12 +13,12 @@ const Signup = () => {
     confirmPassword: "",
     gender: "",
   });
-
+  const { loading } = useSelector((store) => store.user);
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [preview, setPreview] = useState(null);
 
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const handleCheckbox = (gender) => {
     setUser({ ...user, gender });
   };
@@ -32,6 +33,7 @@ const Signup = () => {
     e.preventDefault();
 
     try {
+      dispatch(setLoading(true));
       const formData = new FormData();
       Object.entries(user).forEach(([key, value]) =>
         formData.append(key, value)
@@ -53,6 +55,8 @@ const Signup = () => {
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Signup failed");
+    }finally{
+      dispatch(setLoading(false));
     }
 
     setUser({
@@ -170,16 +174,37 @@ const Signup = () => {
           {/* Button */}
           <button
             type="submit"
-            className="
-              w-full py-2
-              rounded-md
-              bg-emerald-600
-              text-white text-sm font-medium
-              hover:bg-emerald-500
-              transition
-            "
+            disabled={loading}
+            className={`
+    w-full py-2
+    rounded-md
+    text-sm font-medium
+    flex items-center justify-center gap-2
+    transition
+    ${
+      loading
+        ? "bg-emerald-600/60 cursor-not-allowed"
+        : "bg-emerald-600 hover:bg-emerald-500"
+    }
+    text-white
+  `}
           >
-            Sign up
+            {loading ? (
+              <>
+                <span
+                  className="
+          w-4 h-4
+          border-2 border-white/30
+          border-t-white
+          rounded-full
+          animate-spin
+        "
+                />
+                Signing up…
+              </>
+            ) : (
+              "Signup"
+            )}
           </button>
         </form>
 

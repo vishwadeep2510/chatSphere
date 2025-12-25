@@ -13,15 +13,14 @@ const useGetMessages = () => {
       dispatch(setMessages([]));
       return;
     }
-
     const fetchMessages = async () => {
       try {
         const res = await axios.get(
           `${BASE_URL}/api/v1/message/${selectedUser._id}`,
           { withCredentials: true }
         );
-        
-        dispatch(setMessages(Array.isArray(res.data) ? res.data : []));
+
+        dispatch(setMessages(res.data));
       } catch (error) {
         console.error(error);
         dispatch(setMessages([]));

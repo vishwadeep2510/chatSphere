@@ -1,18 +1,16 @@
 import OtherUser from "./OtherUser";
-import useGetOtherUsers from "../hooks/useGetOtherUsers";
-import { useSelector } from "react-redux";
-
-const OtherUsers = () => {
-  useGetOtherUsers();
-  const { otherUsers } = useSelector((store) => store.user);
-
-  if (!otherUsers) return null;
-
+const OtherUsers = ({ users }) => {
   return (
-    <div className="flex-1 overflow-y-auto space-y-1">
-      {otherUsers.map((user) => (
-        <OtherUser key={user._id} user={user} />
-      ))}
+    <div className="flex-1 overflow-y-auto">
+      {users?.length > 0 ? (
+        users.map((user) => (
+          <OtherUser key={user._id} user={user} />
+        ))
+      ) : (
+        <p className="text-sm text-gray-400 text-center mt-4">
+          No users found
+        </p>
+      )}
     </div>
   );
 };

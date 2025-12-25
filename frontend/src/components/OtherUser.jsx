@@ -21,7 +21,7 @@ const OtherUser = ({ user }) => {
         {user.profilePhoto?(
           <img src={user.profilePhoto} alt="profile" className="w-full h-full object-cover rounded-full"/>
         ):(
-          user.fullname?.split(" ").map((n)=>n[0]).join("").toUpperCase()
+          user.fullName?.split(" ").map((n)=>n[0]).join("").toUpperCase()
         )}
       </div>
 

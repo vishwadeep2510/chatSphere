@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { useDispatch } from "react-redux";
-import { setAuthUser } from "../redux/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setAuthUser, setLoading } from "../redux/userSlice";
 import { BASE_URL } from "..";
 
 const Login = () => {
@@ -11,22 +11,23 @@ const Login = () => {
     username: "",
     password: "",
   });
-
+  const { loading } = useSelector((store) => store.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        `${BASE_URL}/api/v1/user/login`,
-        user,
-        { withCredentials: true }
-      );
+      dispatch(setLoading(true));
+      const res = await axios.post(`${BASE_URL}/api/v1/user/login`, user, {
+        withCredentials: true,
+      });
       dispatch(setAuthUser(res.data));
       navigate("/home");
     } catch (error) {
       toast.error(error.response?.data?.message || "Login failed");
+    } finally {
+      dispatch(setLoading(false));
     }
 
     setUser({ username: "", password: "" });
@@ -45,20 +46,16 @@ const Login = () => {
         "
       >
         <h1 className="text-2xl font-semibold text-white text-center mb-6">
-          Welcome back
+          Welcome
         </h1>
 
         <form onSubmit={onSubmitHandler} className="space-y-4">
           {/* Username */}
           <div>
-            <label className="block text-sm text-gray-400 mb-1">
-              Username
-            </label>
+            <label className="block text-sm text-gray-400 mb-1">Username</label>
             <input
               value={user.username}
-              onChange={(e) =>
-                setUser({ ...user, username: e.target.value })
-              }
+              onChange={(e) => setUser({ ...user, username: e.target.value })}
               type="text"
               placeholder="Enter your username"
               className="
@@ -76,14 +73,10 @@ const Login = () => {
 
           {/* Password */}
           <div>
-            <label className="block text-sm text-gray-400 mb-1">
-              Password
-            </label>
+            <label className="block text-sm text-gray-400 mb-1">Password</label>
             <input
               value={user.password}
-              onChange={(e) =>
-                setUser({ ...user, password: e.target.value })
-              }
+              onChange={(e) => setUser({ ...user, password: e.target.value })}
               type="password"
               placeholder="Enter your password"
               className="
@@ -99,19 +92,39 @@ const Login = () => {
             />
           </div>
 
-          {/* Button */}
           <button
             type="submit"
-            className="
-              w-full py-2
-              rounded-md
-              bg-emerald-600
-              text-white text-sm font-medium
-              hover:bg-emerald-500
-              transition
-            "
+            disabled={loading}
+            className={`
+    w-full py-2
+    rounded-md
+    text-sm font-medium
+    flex items-center justify-center gap-2
+    transition
+    ${
+      loading
+        ? "bg-emerald-600/60 cursor-not-allowed"
+        : "bg-emerald-600 hover:bg-emerald-500"
+    }
+    text-white
+  `}
           >
-            Login
+            {loading ? (
+              <>
+                <span
+                  className="
+          w-4 h-4
+          border-2 border-white/30
+          border-t-white
+          rounded-full
+          animate-spin
+        "
+                />
+                Logging in…
+              </>
+            ) : (
+              "Login"
+            )}
           </button>
         </form>
 
