@@ -7,7 +7,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["https://chatsphere-5u9g.onrender.com"],
+    origin: ["https://chat-sphere-ivory-three.vercel.app"],
     methods: ["GET", "POST"],
   },
 });
