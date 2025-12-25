@@ -14,7 +14,7 @@ app.use(express.urlencoded({extended:true}));
 app.use(express.json()); 
 app.use(cookieParser());
 const corsOption={
-    origin:'https://chatsphere-5u9g.onrender.com',
+    origin:'http://localhost:3000/',
     credentials:true
 };
 app.use(cors(corsOption)); 
