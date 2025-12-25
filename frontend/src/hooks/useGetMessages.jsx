@@ -10,9 +10,9 @@ const useGetMessages = () => {
 
   useEffect(() => {
     if (!selectedUser?._id) {
-      dispatch(setMessages([]));
       return;
     }
+    dispatch(setMessages([]));
     const fetchMessages = async () => {
       try {
         const res = await axios.get(
